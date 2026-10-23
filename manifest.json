@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "GEO Lens - SEO & AI Search Inspector",
+  "short_name": "GEO Lens",
+  "description": "A local-first Chrome extension that audits SEO, GEO, answerability, schema, and LLM-ready page evidence.",
+  "version": "0.1.5",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
+  "action": {
+    "default_title": "Audit this page with GEO Lens",
+    "default_icon": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png",
+      "48": "assets/icon-48.png",
+      "128": "assets/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/sidepanel.html"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "sidePanel",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://docs.google.com/document/*"
+  ],
+  "commands": {
+    "run-audit": {
+      "suggested_key": {
+        "default": "Alt+Shift+G"
+      },
+      "description": "Run a GEO Lens audit on the current page"
+    }
+  }
+}

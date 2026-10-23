@@ -1,0 +1,10 @@
+{
+  "name": "geo-lens-extension",
+  "version": "0.1.5",
+  "private": true,
+  "description": "Local-first Chrome extension MVP for SEO, GEO, answerability, schema, and BYOB LLM audit prompts.",
+  "scripts": {
+    "zip": "bash scripts/package-extension.sh"
+  },
+  "devDependencies": {}
+}

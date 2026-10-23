@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GEO Lens</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">SEO · GEO · AI Search</p>
+        <h1>GEO Lens</h1>
+        <div class="header-meta">
+          <span class="mode-pill" id="modePill">Ready</span>
+          <span id="lastChecked">Not checked yet</span>
+        </div>
+      </div>
+      <div class="grade-pill" id="overallGrade">—</div>
+    </header>
+
+    <section class="action-row">
+      <button class="primary" id="auditButton">Refresh audit</button>
+      <details class="menu-button">
+        <summary>Copy</summary>
+        <div class="menu-panel">
+          <button id="copyTldrButton" disabled>TLDR</button>
+          <button id="copyEditorBriefButton" disabled>Editor brief</button>
+          <button id="copyPromptButton" disabled>Full LLM prompt</button>
+          <button id="copyScoreButton" disabled>Score only</button>
+        </div>
+      </details>
+      <details class="menu-button">
+        <summary>More</summary>
+        <div class="menu-panel">
+          <button id="exportMarkdownButton" disabled>Export Markdown</button>
+          <button id="exportJsonButton" disabled>Export JSON</button>
+          <button id="toggleHighlightsButton" disabled>Hide highlights</button>
+          <button id="clearHighlightsButton" disabled>Clear highlights</button>
+        </div>
+      </details>
+    </section>
+
+    <div class="status" id="statusBox">Open a page, click the extension icon, then run an audit.</div>
+
+    <nav class="tabs" aria-label="GEO Lens report tabs">
+      <button class="tab active" data-tab="overview">Guide</button>
+      <button class="tab" data-tab="sections">Sections</button>
+      <button class="tab" data-tab="publish">Publish</button>
+      <button class="tab" data-tab="history">History</button>
+      <button class="tab" data-tab="schema">Details</button>
+      <button class="tab" data-tab="settings">Settings</button>
+    </nav>
+
+    <section class="tab-panel active" id="tab-overview">
+      <div class="empty-state" id="overviewEmpty">
+        <h2>No audit yet</h2>
+        <p>Run a local page audit to grade SEO, GEO, schema, answerability, evidence, and section quality.</p>
+      </div>
+      <div id="overviewContent" class="hidden"></div>
+    </section>
+
+    <section class="tab-panel" id="tab-sections">
+      <div class="toolbar-row">
+        <label for="sectionFilter">Show</label>
+        <select id="sectionFilter">
+          <option value="all">All sections</option>
+          <option value="weak">Weak only</option>
+          <option value="strong">Strong only</option>
+          <option value="claims">Unsupported claims</option>
+        </select>
+      </div>
+      <div id="sectionsList" class="stack"></div>
+    </section>
+
+    <section class="tab-panel" id="tab-evidence">
+      <div id="evidenceContent" class="stack"></div>
+    </section>
+
+    <section class="tab-panel" id="tab-publish">
+      <div id="publishContent" class="stack"></div>
+    </section>
+
+    <section class="tab-panel" id="tab-history">
+      <div id="historyContent" class="stack"></div>
+    </section>
+
+    <section class="tab-panel" id="tab-schema">
+      <div id="schemaContent" class="stack"></div>
+    </section>
+
+    <section class="tab-panel" id="tab-settings">
+      <div class="card">
+        <h2>Local settings</h2>
+        <p class="muted">These settings are stored in Chrome extension storage. The extension does not call an LLM or external API.</p>
+
+        <label class="field">
+          <span>Scoring strictness</span>
+          <select id="strictnessInput">
+            <option value="generous">Generous</option>
+            <option value="balanced">Balanced</option>
+            <option value="strict">Strict</option>
+          </select>
+        </label>
+
+        <label class="field checkbox-field">
+          <input type="checkbox" id="autoHighlightInput" />
+          <span>Apply page highlights after audit</span>
+        </label>
+
+        <label class="field checkbox-field">
+          <input type="checkbox" id="showGoodInput" />
+          <span>Highlight strong intent and answer blocks</span>
+        </label>
+
+        <label class="field checkbox-field">
+          <input type="checkbox" id="showBadInput" />
+          <span>Highlight weak copy and unsupported claims</span>
+        </label>
+
+        <label class="field">
+          <span>Brand/entity terms to boost</span>
+          <textarea id="brandTermsInput" rows="6" placeholder="Ledger&#10;Ledger Wallet&#10;Clear Signing"></textarea>
+        </label>
+
+        <button class="primary full" id="saveSettingsButton">Save settings</button>
+        <button class="secondary full" id="showOnboardingButton">Show first-time walkthrough</button>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-help">
+      <div class="card prose">
+        <h2>How to use GEO Lens</h2>
+        <ol>
+          <li>Open any normal website page.</li>
+          <li>Click the GEO Lens extension icon.</li>
+          <li>Review the grades, highlighted evidence, and prioritized fixes.</li>
+          <li>Click <strong>Copy LLM prompt</strong> and paste it into your preferred AI tool.</li>
+        </ol>
+        <p>Chrome blocks extensions from auditing internal pages such as <code>chrome://</code>, the Chrome Web Store, browser settings pages, and some PDFs.</p>
+        <h3>Grade meaning</h3>
+        <p><strong>A/A+</strong> means the section is clear, answerable, entity-rich, and evidence-ready. <strong>C</strong> usually means useful but generic. <strong>D/F</strong> means it is likely too vague, thin, unsupported, or hard for an answer engine to extract.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="onboarding hidden" id="onboardingOverlay" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+    <div class="onboarding-card">
+      <button class="icon-button" id="closeOnboardingButton" aria-label="Close walkthrough">×</button>
+      <p class="eyebrow">First-time setup</p>
+      <h2 id="onboardingTitle">Welcome to GEO Lens</h2>
+      <div id="onboardingBody"></div>
+      <div class="onboarding-progress" id="onboardingProgress"></div>
+      <div class="onboarding-actions">
+        <button class="secondary" id="prevOnboardingButton">Back</button>
+        <button class="primary" id="nextOnboardingButton">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
